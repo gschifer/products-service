@@ -4,19 +4,21 @@ import com.example.products.productsservice.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.example.products.productsservice.service.ProductService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/products")
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('SCOPE_read')")
     public ResponseEntity<List<Product>> getAllProducts(@RequestParam(required = false) String brand,
                                                         @RequestParam(required = false) String category,
                                                         @RequestParam(required = false) String color,
@@ -36,6 +38,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('SCOPE_write')")
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         Product createdProduct = productService.createProduct(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
